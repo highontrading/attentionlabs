@@ -1,0 +1,7 @@
+# Netlify — keep old URLs working
+/portfolio        /work/              301
+/casestudies      /case-studies/      301
+/methodology      /services/          301
+/intelligence     /services/#pricing  301
+/intelligence/*   /services/          301
+/contact          /contact/           301

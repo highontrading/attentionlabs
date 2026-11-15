@@ -1,0 +1,13 @@
+{
+  "name": "attentionlabs-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Attention Labs — agency website",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs && node serve.mjs",
+    "serve": "node serve.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
