@@ -125,19 +125,35 @@
   /* ------------------------------------------------------------------ */
   /* Fit text (giant wordmarks)                                          */
   /* ------------------------------------------------------------------ */
+  // CSS sizes the wordmarks with container units; this measures the real
+  // rendered text and corrects for the exact font (incl. fallback fonts).
   const fitEls = $$('[data-fit]');
-  function fit() {
-    fitEls.forEach((el) => {
-      const inner = $('.fit', el);
-      if (!inner) return;
-      el.style.fontSize = '100px';
-      const w = inner.getBoundingClientRect().width;
-      const target = el.clientWidth;
-      if (w > 0) el.style.fontSize = `${(100 * target) / w * 0.995}px`;
-    });
+  const fitWidths = new WeakMap();
+  function fitOne(el) {
+    const inner = $('.fit', el);
+    const target = el.clientWidth;
+    if (!inner || !target) return;
+    el.style.fontSize = '100px';
+    // offsetWidth is layout width: unaffected by the intro transforms.
+    const w = inner.offsetWidth;
+    el.style.fontSize = w > 0 ? `${((100 * target) / w) * 0.985}px` : '';
+    fitWidths.set(el, target);
   }
+  function fit() { fitEls.forEach(fitOne); }
   fit();
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  if ('ResizeObserver' in window) {
+    // Fires on any width change: window resize, scrollbar appearing after the
+    // preloader, device rotation, embedded preview panes…
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => {
+      if (fitWidths.get(e.target) !== e.target.clientWidth) fitOne(e.target);
+    }));
+    fitEls.forEach((el) => ro.observe(el));
+  }
+  if (document.fonts) {
+    document.fonts.ready.then(fit);
+    document.fonts.addEventListener?.('loadingdone', fit);
+  }
+  addEventListener('load', fit);
   let rT;
   addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => { fit(); measureParallax(); }, 120); });
 
