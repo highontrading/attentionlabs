@@ -19,6 +19,7 @@ All copy lives in **`src/data.mjs`**: services, pricing, stats, testimonials, FA
 | Design system / styles | `assets/css/style.css` (tokens at the top) |
 | Animations & interactions | `assets/js/main.js` |
 | Images | `assets/img/` (WebP) |
+| Font (Inter Tight, self-hosted, OFL) | `assets/fonts/` |
 | Static extras (robots, redirects) | `public/` |
 
 **To add a case study,** add an object to `caseStudies` in `src/data.mjs`. Its page is generated at `/case-studies/<slug>/`.
@@ -37,7 +38,7 @@ All copy lives in **`src/data.mjs`**: services, pricing, stats, testimonials, FA
 
 ## Motion
 
-- Preloader on the first visit
+- No loading screen: the hero animates in as soon as the page opens
 - Curtain page transitions
 - Lenis smooth scroll
 - Split-text reveals and clip-path image reveals

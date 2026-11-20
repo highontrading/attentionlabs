@@ -143,7 +143,7 @@
   fit();
   if ('ResizeObserver' in window) {
     // Fires on any width change: window resize, scrollbar appearing after the
-    // preloader, device rotation, embedded preview panes…
+    // a scroll lock (menu, lightbox), device rotation, embedded preview panes…
     const ro = new ResizeObserver((entries) => entries.forEach((e) => {
       if (fitWidths.get(e.target) !== e.target.clientWidth) fitOne(e.target);
     }));
@@ -426,44 +426,9 @@
   });
 
   /* ------------------------------------------------------------------ */
-  /* Boot sequence: preloader → page transition → ready                  */
+  /* Boot sequence: (arriving page transition →) ready                   */
+  /* No preloader: content animates in immediately on first load.        */
   /* ------------------------------------------------------------------ */
-  async function preloader() {
-    const num = $('[data-preload-count]');
-    const bar = $('[data-preload-bar]');
-    const imgs = $$('.strip img, .phero img, .cs-cover img').slice(0, 8);
-    let loaded = 0;
-    const total = Math.max(imgs.length, 1);
-    imgs.forEach((im) => {
-      if (im.complete) loaded++;
-      else im.addEventListener('load', () => loaded++, { once: true }), im.addEventListener('error', () => loaded++, { once: true });
-    });
-    lockScroll(true);
-    const t0 = performance.now();
-    let shown = 0;
-    await new Promise((resolve) => {
-      const step = (now) => {
-        const timeP = clamp((now - t0) / 1700, 0, 1);
-        const loadP = loaded / total;
-        const target = Math.min(timeP, Math.max(loadP, timeP * 0.9)) * 100;
-        shown = lerp(shown, (now - t0) > 4000 ? 100 : target, 0.12);
-        if (target >= 100 && shown > 99.4) shown = 100;
-        num.textContent = Math.round(shown);
-        bar.style.transform = `scaleX(${shown / 100})`;
-        if (shown >= 100) resolve();
-        else requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    });
-    await wait(180);
-    html.classList.add('preload-out');
-    await wait(450);
-    lockScroll(false);
-    ready();
-    await wait(700);
-    html.classList.remove('is-preloading', 'preload-out');
-  }
-
   async function enterTransition() {
     setPtLabel(html.getAttribute('data-pt') || document.body.dataset.page || '');
     await wait(60);
@@ -489,10 +454,9 @@
   }
 
   if (reduce) {
-    html.classList.remove('is-preloading', 'pt-enter');
+    html.classList.remove('pt-enter');
     ready();
-  } else if (html.classList.contains('is-preloading')) preloader();
-  else if (html.classList.contains('pt-enter')) enterTransition();
+  } else if (html.classList.contains('pt-enter')) enterTransition();
   else ready();
 
   /* ------------------------------------------------------------------ */

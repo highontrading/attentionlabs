@@ -117,23 +117,16 @@ const layout = ({ title, description = site.description, path = '/', body, pt = 
 <meta property="og:image" content="${site.url}/assets/img/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="preload" href="/assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=${V.css}">
 <script>
-(function(){var d=document.documentElement;d.classList.add('js');try{var s=sessionStorage;if(!s.getItem('al:v')){d.classList.add('is-preloading');s.setItem('al:v','1');s.removeItem('al:pt')}else if(s.getItem('al:pt')){d.classList.add('pt-enter');d.setAttribute('data-pt',s.getItem('al:pt'));s.removeItem('al:pt')}}catch(e){}})();
+(function(){var d=document.documentElement;d.classList.add('js');try{var s=sessionStorage,l=s.getItem('al:pt');if(l){d.classList.add('pt-enter');d.setAttribute('data-pt',l);s.removeItem('al:pt')}}catch(e){}})();
 </script>
 ${head}
 </head>
 <body class="${cls}" data-page="${esc(pt)}">
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="preloader" aria-hidden="true">
-  <div class="preloader__top"><span>${site.wordmark}<sup>®</sup></span><span>${site.tagline}</span></div>
-  <div class="preloader__count"><span data-preload-count>0</span><sup>%</sup></div>
-  <div class="preloader__bar"><i data-preload-bar></i></div>
-</div>
 
 <div class="pt" aria-hidden="true"><div class="pt__inner"><span class="pt__k">${site.wordmark}®</span><span class="pt__label" data-pt-label>${esc(pt)}</span></div></div>
 

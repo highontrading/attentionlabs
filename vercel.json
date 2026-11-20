@@ -4,9 +4,45 @@
   "cleanUrls": true,
   "trailingSlash": true,
   "redirects": [
-    { "source": "/portfolio", "destination": "/work/", "permanent": true },
-    { "source": "/casestudies", "destination": "/case-studies/", "permanent": true },
-    { "source": "/methodology", "destination": "/services/", "permanent": true },
-    { "source": "/intelligence/:path*", "destination": "/services/", "permanent": true }
+    {
+      "source": "/portfolio",
+      "destination": "/work/",
+      "permanent": true
+    },
+    {
+      "source": "/casestudies",
+      "destination": "/case-studies/",
+      "permanent": true
+    },
+    {
+      "source": "/methodology",
+      "destination": "/services/",
+      "permanent": true
+    },
+    {
+      "source": "/intelligence/:path*",
+      "destination": "/services/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(fonts|css|js|vendor)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/img/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
+    }
   ]
 }
