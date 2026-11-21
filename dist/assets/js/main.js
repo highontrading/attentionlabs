@@ -336,10 +336,43 @@
   /* ------------------------------------------------------------------ */
   /* Master rAF loop                                                     */
   /* ------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------ */
+  /* Hero reel — each preview video loads and plays only while it is on  */
+  /* screen (the strip moves, so this is checked a few times a second),  */
+  /* and pauses as soon as it leaves. Nothing downloads before that.     */
+  /* ------------------------------------------------------------------ */
+  const saveData = navigator.connection && navigator.connection.saveData;
+  const reel = (() => {
+    const vids = $$('[data-reel] video');
+    const autoplay = !reduce && !saveData;
+    let last = 0;
+    let lbOpen = () => $('[data-lightbox]')?.classList.contains('is-open');
+    const play = (v) => {
+      if (!v.src) { v.src = v.dataset.reelSrc; v.preload = 'auto'; }
+      if (v.paused) { const p = v.play(); if (p) p.catch(() => {}); }
+    };
+    return {
+      tick(now) {
+        if (!vids.length || !autoplay || !isReady || document.hidden || lbOpen() || now - last < 150) return;
+        last = now;
+        const vw = innerWidth, vh = innerHeight;
+        for (const v of vids) {
+          const r = v.getBoundingClientRect();
+          const visible = r.right > -40 && r.left < vw + 40 && r.bottom > 0 && r.top < vh;
+          if (visible) play(v);
+          else if (!v.paused) v.pause();
+        }
+      },
+      pauseAll() { vids.forEach((v) => v.paused || v.pause()); },
+    };
+  })();
+  document.addEventListener('visibilitychange', () => document.hidden && reel.pauseAll());
+
   function raf(t) {
     if (lenis) lenis.raf(t);
     onFrame();
     cursorFrame();
+    reel.tick(t);
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
@@ -519,30 +552,43 @@
   });
 
   /* ------------------------------------------------------------------ */
-  /* Lightbox (YouTube)                                                  */
+  /* Lightbox — YouTube embeds (work page) and native video (hero reel)  */
   /* ------------------------------------------------------------------ */
   const lb = $('[data-lightbox]');
   const lbMedia = $('[data-lightbox-media]');
   const lbTitle = $('[data-lightbox-title]');
   let lbReturn = null;
-  function openLightbox(id, title, from) {
+  function openLightbox({ id, src, portrait = false }, title, from) {
     lbReturn = from;
-    lbMedia.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="${title.replace(/"/g, '&quot;')}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    const t = title.replace(/"/g, '&quot;');
+    if (src) {
+      lbMedia.innerHTML = `<video src="${src}" title="${t}" controls autoplay playsinline></video>`;
+    } else {
+      lbMedia.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="${t}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    }
+    lb.classList.toggle('is-portrait', portrait);
     lbTitle.textContent = title;
     lb.classList.add('is-open');
     lb.setAttribute('aria-hidden', 'false');
     lockScroll(true);
+    reel.pauseAll();
     setTimeout(() => $('.lightbox__close', lb).focus(), 300);
   }
   function closeLightbox() {
     if (!lb.classList.contains('is-open')) return;
     lb.classList.remove('is-open');
     lb.setAttribute('aria-hidden', 'true');
+    $('video', lbMedia)?.pause();
     lockScroll(false);
     setTimeout(() => (lbMedia.innerHTML = ''), 500);
     lbReturn?.focus({ preventScroll: true });
   }
-  $$('[data-video]').forEach((b) => b.addEventListener('click', () => openLightbox(b.dataset.video, b.dataset.videoTitle || '', b)));
+  $$('[data-video]').forEach((b) => b.addEventListener('click', () => openLightbox({ id: b.dataset.video }, b.dataset.videoTitle || '', b)));
+  $$('[data-reel-full]').forEach((b) => b.addEventListener('click', () => {
+    const tile = b.closest('.tile');
+    const portrait = parseFloat(getComputedStyle(tile).getPropertyValue('--r')) < 1;
+    openLightbox({ src: b.dataset.reelFull, portrait }, b.dataset.videoTitle || '', b);
+  }));
   $$('[data-lightbox-close]').forEach((b) => b.addEventListener('click', closeLightbox));
 
   /* ------------------------------------------------------------------ */

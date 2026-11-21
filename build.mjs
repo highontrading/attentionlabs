@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import {
   site, nav, stats, clients, problemFix, audiences, services, whyUs, ownedMedia,
-  guarantees, process as steps, anatomy, labReport, testimonials, faqs, work, caseStudies,
+  guarantees, process as steps, anatomy, labReport, testimonials, faqs, work, caseStudies, reel,
 } from './src/data.mjs';
 
 const OUT = 'dist';
@@ -183,21 +183,6 @@ const caseCard = (c, i) => `
   </a>
 </article>`;
 
-const serviceCards = (full = false) => `
-<div class="svc">
-  ${services.map((s, i) => `<article class="svc__card${s.featured ? ' is-featured' : ''}" data-reveal="fade" style="--d:${i * 0.1}s">
-    <div class="svc__top"><span class="svc__idx">${pad(i + 1)}</span><span class="svc__tag">${s.tag}</span></div>
-    <h3 class="svc__name">${s.name}</h3>
-    <p class="svc__alias">${s.alias}</p>
-    <p class="svc__text">${s.text}</p>
-    ${full ? `<ul class="svc__list">${s.includes.map((x) => `<li>${x}</li>`).join('')}</ul>` : `<ul class="svc__list svc__list--compact">${s.includes.slice(0, 3).map((x) => `<li>${x}</li>`).join('')}</ul>`}
-    <div class="svc__foot">
-      <div class="svc__price"><b>${s.price}</b><span>${s.note}</span></div>
-      ${btn(s.cta, `/contact/?tier=${s.key}#apply`, { variant: s.featured ? 'light' : 'dark' })}
-    </div>
-  </article>`).join('')}
-</div>`;
-
 const testimonialsBlock = () => `
 <section class="quotes" data-slider>
   <div class="quotes__inner container">
@@ -235,21 +220,14 @@ const faqBlock = () => `
 </section>`;
 
 // ---------- pages ----------------------------------------------------------
-const stripTiles = [
-  { t: 'img', src: '/assets/img/people/shivender-kanwar.webp', alt: 'Shivender Kanwar portrait', r: '0.78' },
-  { t: 'img', src: '/assets/img/work/industrial-47.webp', alt: 'Industrial 47 fund launch film', r: '1.5' },
-  { t: 'type', bg: 'accent', big: '80M+', small: 'Views generated', r: '1' },
-  { t: 'img', src: '/assets/img/work/alpha-premier-league.webp', alt: 'Alpha Premier League launch film', r: '1.5' },
-  { t: 'img', src: '/assets/img/people/shivender-field.webp', alt: 'Shivender Kanwar in the field', r: '1.25' },
-  { t: 'type', bg: 'ink', big: '1000+', small: 'Videos shipped', r: '0.8' },
-  { t: 'img', src: '/assets/img/work/motion-reel.webp', alt: 'Motion graphics reel', r: '1.5' },
-  { t: 'img', src: '/assets/img/work/shivender-intro.webp', alt: 'Shivender Kanwar channel intro', r: '1.5' },
-  { t: 'type', bg: 'stone', big: 'Owned<br>&gt; Rented', small: 'Media philosophy', r: '1' },
-];
-const tile = (x, hidden) =>
-  x.t === 'img'
-    ? `<li class="tile" style="--r:${x.r}"><img src="${x.src}" alt="${hidden ? '' : esc(x.alt)}" ${hidden ? 'aria-hidden="true" ' : ''}loading="${hidden ? 'lazy' : 'eager'}" decoding="async"></li>`
-    : `<li class="tile tile--type tile--${x.bg}" style="--r:${x.r}"${hidden ? ' aria-hidden="true"' : ''}><b>${x.big}</b><span>${x.small}</span></li>`;
+// Hero reel: silent preview loops in a moving strip. Videos load + play only
+// while on screen (see main.js); click opens the full video with sound.
+const reelTile = (v, i, dup) => `<li class="tile tile--video" style="--r:${v.r.toFixed(4)}">
+    <button type="button" class="tile__btn" data-reel-full="${v.full}" data-video-title="${esc(v.title)}" data-cursor="Play"${dup ? ' tabindex="-1" aria-hidden="true"' : ` aria-label="Play ${esc(v.title)} with sound"`}>
+      <video muted loop playsinline preload="none" poster="${v.poster}" data-reel-src="${v.src}" disablepictureinpicture></video>
+      <span class="tile__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+    </button>
+  </li>`;
 
 const home = () => layout({
   path: '/',
@@ -271,8 +249,8 @@ const home = () => layout({
   </div>
 </section>
 
-<section class="strip" aria-label="Selected work">
-  <ul class="strip__track">${stripTiles.map((x) => tile(x)).join('')}${stripTiles.map((x) => tile(x, true)).join('')}</ul>
+<section class="strip" aria-label="Showreel">
+  <ul class="strip__track" data-reel>${reel.map((v, i) => reelTile(v, i, false)).join('')}${reel.map((v, i) => reelTile(v, i, true)).join('')}</ul>
 </section>
 
 <section class="about container" id="about">
@@ -308,10 +286,6 @@ ${statsBlock()}
   </ol>
 </section>
 
-<section class="services container" id="services">
-  <div class="sec-head"><h2 class="h2" data-split>Three ways to work with us</h2><a class="label link" href="/services/">( All services )</a></div>
-  ${serviceCards(false)}
-</section>
 
 ${testimonialsBlock()}
 
@@ -451,7 +425,7 @@ const servicesPage = () => layout({
   title: 'Services',
   path: '/services/',
   pt: 'Services',
-  description: 'The Attention Labs methodology and engagement models — The Sprint, The Engine and The Build.',
+  description: 'The Attention Labs methodology: how we turn expertise into owned media that holds attention — and the guarantees behind it.',
   body: `
 ${pageHero({ k: 'Methodology', title: 'We don’t guess. <em>We test.</em>', lead: 'We are not artists. We are attention engineers. Our process is built on data, not feelings.' })}
 
@@ -480,10 +454,6 @@ ${pageHero({ k: 'Methodology', title: 'We don’t guess. <em>We test.</em>', lea
   </div>
 </section>
 
-<section class="services container" id="pricing">
-  <div class="sec-head"><h2 class="h2" data-split>Engagement models</h2>${label('Pricing')}</div>
-  ${serviceCards(true)}
-</section>
 
 <section class="why container">
   <div class="sec-head"><h2 class="h2" data-split>Why Attention Labs</h2>${label('Edge')}</div>
@@ -566,8 +536,8 @@ ${pageHero({ k: 'Book a call', title: 'Let’s <em>talk.</em>', lead: 'We operat
           <label class="field"><input name="channel" placeholder=" "><span>Current distribution channel (if any)</span></label>
         </div>
         <fieldset class="tiers">
-          <legend>Which tier interests you?</legend>
-          ${services.map((s) => `<label class="tier"><input type="radio" name="tier" value="${s.name} (${s.price})" data-tier="${s.key}"><span><b>${s.name}</b><i>${s.price}${s.key === 'engine' ? ' / mo' : ''}</i></span></label>`).join('')}
+          <legend>What are you interested in?</legend>
+          ${services.map((s) => `<label class="tier"><input type="radio" name="tier" value="${s.name}" data-tier="${s.key}"><span><b>${s.name}</b><i>${s.short}</i></span></label>`).join('')}
           <label class="tier"><input type="radio" name="tier" value="Not sure yet" data-tier="unsure"><span><b>Not sure yet</b><i>Let’s talk</i></span></label>
         </fieldset>
         <label class="field field--area"><textarea name="advantage" rows="4" required placeholder=" "></textarea><span>The filter question: what is your unfair advantage? *</span></label>

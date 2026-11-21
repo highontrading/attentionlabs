@@ -68,57 +68,36 @@ export const audiences = [
   },
 ];
 
+// Engagement options — shown only as choices in the contact form (no public pricing).
 export const services = [
-  {
-    key: 'sprint',
-    name: 'The Sprint',
-    alias: 'The Protocol Sprint',
-    tag: 'The Wedge',
-    text: 'For skeptics and data-seekers. 30 days. 4 long-form videos. 10 short-form assets. A full audit of where you stand and what’s possible — proof before commitment.',
-    includes: [
-      'Strategy workshop (the audit)',
-      '4 long-form video assets',
-      '10 short-form vertical assets',
-      'The Lab Report — a forensic analysis of your market position',
-    ],
-    price: '$3,000',
-    note: 'One-time',
-    cta: 'Start the Sprint',
-  },
-  {
-    key: 'engine',
-    name: 'The Engine',
-    alias: 'The Founder OS',
-    tag: 'Most popular',
-    text: 'We become your external media team — your outsourced Chief Media Officer. One monthly interview with you, 30+ assets out the door. Community handled.',
-    includes: [
-      'Full channel management (YouTube, LinkedIn, X)',
-      'Monthly “extraction” interview',
-      '30+ assets per month (video, text, newsletter)',
-      'Community management & response',
-    ],
-    price: '$6,000',
-    note: 'Per month',
-    cta: 'Start the Engine',
-    featured: true,
-  },
-  {
-    key: 'build',
-    name: 'The Build',
-    alias: 'Enterprise Media Build',
-    tag: 'The Asset',
-    text: 'For companies ready to launch a standalone media brand. Full concept, production, distribution and monetization — priced on scope with performance alignment.',
-    includes: [
-      'Concept & casting',
-      'Full production',
-      'Distribution strategy',
-      'Monetization strategy',
-    ],
-    price: 'Custom',
-    note: 'Scope + performance',
-    cta: 'Discuss the Build',
-  },
+  { key: 'sprint', name: 'The Sprint', short: '30-day pilot' },
+  { key: 'engine', name: 'The Engine', short: 'Monthly media team' },
+  { key: 'build', name: 'The Build', short: 'Standalone media brand' },
 ];
+
+// Hero reel — 12 clips. `src`/`poster` are light 10s silent preview loops
+// (assets/video); `full` is the original with sound, opened on click.
+const SUPA = 'https://xfyshcjptayuemcwxnpr.supabase.co/storage/v1/object/public/uploads/';
+export const reel = [
+  { n: '01', r: 16 / 9, full: '1795287294770-0555304c-7c6f-4448-bc79-5d062f77d295' },
+  { n: '03', r: 9 / 16, full: '1795287294769-a194bedf-b339-4126-b42b-aa38ba9c1a7a' },
+  { n: '02', r: 4 / 3, full: '1795287294770-4f7fd951-3560-4527-a83a-072120904844' },
+  { n: '04', r: 9 / 16, full: '1795287294770-f4ad3777-6883-488d-ae4f-d3d4b6bce7c9' },
+  { n: '05', r: 16 / 9, full: '1795287294770-4d417acd-8d5d-4497-8102-4cdcb19be628' },
+  { n: '08', r: 9 / 16, full: '1795287294770-39fd62a0-05cb-4d23-ba16-8ce5fc95baaf' },
+  { n: '06', r: 16 / 9, full: '1795287294770-dc24eaae-ae9c-4e8c-807a-038ad29530c1' },
+  { n: '10', r: 9 / 16, full: '1795287294770-4e325626-854a-4c56-a5af-90fc6f4bb93e' },
+  { n: '07', r: 16 / 9, full: '1795287294770-2265ebc7-89c2-45b7-9502-ff01910a5ab8' },
+  { n: '11', r: 9 / 16, full: '1795287294770-1405c2f2-1ee9-4ba9-9d26-7803f0d610b5' },
+  { n: '09', r: 16 / 9, full: '1795287294770-1fd70adb-9da7-4349-a43b-0ca7acf1cbf6' },
+  { n: '12', r: 9 / 16, full: '1795287294770-135db706-82b8-4761-ba6b-7f71d7d958af' },
+].map((v, i) => ({
+  ...v,
+  title: `Attention Labs reel — ${String(i + 1).padStart(2, '0')}`,
+  src: `/assets/video/reel-${v.n}.mp4`,
+  poster: `/assets/video/reel-${v.n}.webp`,
+  full: SUPA + v.full + '.mp4',
+}));
 
 export const whyUs = [
   { title: 'Technical fluency', text: 'We go deep on AI, fintech and infra — not just fluff.' },

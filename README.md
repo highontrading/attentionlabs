@@ -32,7 +32,7 @@ All copy lives in **`src/data.mjs`**: services, pricing, stats, testimonials, FA
 - `/work/`: portfolio with filters and a video lightbox
 - `/case-studies/`: case study index
 - `/case-studies/<slug>/`: one page per case study
-- `/services/`: methodology and pricing
+- `/services/`: methodology, guarantees and lab report
 - `/contact/`: book a call (Calendly embed) or apply for access
 - `404.html`: not-found page
 
