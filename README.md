@@ -39,7 +39,7 @@ All copy lives in **`src/data.mjs`**: services, pricing, stats, testimonials, FA
 ## Motion
 
 - No loading screen: the hero animates in as soon as the page opens
-- Curtain page transitions
+- Fast page transitions: native cross-fade (View Transitions API), header stays still, links prerender on hover
 - Lenis smooth scroll
 - Split-text reveals and clip-path image reveals
 - Scroll-filled About text

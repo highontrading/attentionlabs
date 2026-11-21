@@ -15,10 +15,6 @@
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  const store = {
-    get: (k) => { try { return sessionStorage.getItem(k); } catch { return null; } },
-    set: (k, v) => { try { sessionStorage.setItem(k, v); } catch {} },
-  };
 
   /* ------------------------------------------------------------------ */
   /* Smooth scroll                                                       */
@@ -379,16 +375,11 @@
 
   /* ------------------------------------------------------------------ */
   /* Page transitions                                                    */
+  /* Navigation is never delayed: the browser's native cross-document    */
+  /* View Transition (see CSS) cross-fades old → new page, and links are */
+  /* prerendered on hover (speculation rules), so pages appear instantly.*/
+  /* Only same-page anchors are intercepted, for smooth scrolling.       */
   /* ------------------------------------------------------------------ */
-  const ptLabel = $('[data-pt-label]');
-  const setPtLabel = (txt) => { ptLabel.innerHTML = `<span></span>`; ptLabel.firstChild.textContent = txt; };
-
-  function labelFor(a, url) {
-    if (a.dataset.ptLabel) return a.dataset.ptLabel;
-    const map = { '/': 'Home', '/work/': 'Work', '/case-studies/': 'Case Studies', '/services/': 'Services', '/contact/': 'Book a Call' };
-    return map[url.pathname] || (a.textContent || '').trim().split('\n')[0].slice(0, 28) || 'Loading';
-  }
-
   document.addEventListener('click', (e) => {
     const a = e.target.closest('a[href]');
     if (!a) return;
@@ -406,39 +397,18 @@
         const t = document.getElementById(url.hash.slice(1));
         if (t) scrollTo(t);
       } else scrollTo(0);
-      return;
     }
-
-    e.preventDefault();
-    if (reduce) { location.href = url.href; return; }
-    setPtLabel(labelFor(a, url));
-    store.set('al:pt', labelFor(a, url));
-    html.classList.add('pt-active');
-    setTimeout(() => (location.href = url.href), 780);
   });
 
-  // Back/forward cache restore → clear transition state
+  // Back/forward cache restore (e.g. user left via the open menu) → reset
   addEventListener('pageshow', (e) => {
-    if (e.persisted) {
-      html.classList.remove('pt-active', 'pt-enter', 'pt-leave', 'menu-open');
-      lockScroll(false);
-    }
+    if (e.persisted) { setMenu(false); closeLightbox(); lockScroll(false); }
   });
 
   /* ------------------------------------------------------------------ */
-  /* Boot sequence: (arriving page transition →) ready                   */
-  /* No preloader: content animates in immediately on first load.        */
+  /* Boot: no preloader, no curtain — content animates in immediately.   */
+  /* A prerendered page waits until it is actually shown.                */
   /* ------------------------------------------------------------------ */
-  async function enterTransition() {
-    setPtLabel(html.getAttribute('data-pt') || document.body.dataset.page || '');
-    await wait(60);
-    html.classList.add('pt-leave');
-    await wait(260);
-    ready();
-    await wait(800);
-    html.classList.remove('pt-enter', 'pt-leave');
-  }
-
   let isReady = false;
   function ready() {
     if (isReady) return;
@@ -453,10 +423,7 @@
     document.dispatchEvent(new CustomEvent('app:ready'));
   }
 
-  if (reduce) {
-    html.classList.remove('pt-enter');
-    ready();
-  } else if (html.classList.contains('pt-enter')) enterTransition();
+  if (document.prerendering) document.addEventListener('prerenderingchange', ready, { once: true });
   else ready();
 
   /* ------------------------------------------------------------------ */

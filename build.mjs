@@ -119,16 +119,12 @@ const layout = ({ title, description = site.description, path = '/', body, pt = 
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=${V.css}">
-<script>
-(function(){var d=document.documentElement;d.classList.add('js');try{var s=sessionStorage,l=s.getItem('al:pt');if(l){d.classList.add('pt-enter');d.setAttribute('data-pt',l);s.removeItem('al:pt')}}catch(e){}})();
-</script>
+<script>document.documentElement.classList.add('js');</script>
+<script type="speculationrules">{"prerender":[{"where":{"and":[{"href_matches":"/*"},{"not":{"selector_matches":"[target=_blank], [download]"}}]},"eagerness":"moderate"}]}</script>
 ${head}
 </head>
 <body class="${cls}" data-page="${esc(pt)}">
 <a class="skip" href="#main">Skip to content</a>
-
-
-<div class="pt" aria-hidden="true"><div class="pt__inner"><span class="pt__k">${site.wordmark}®</span><span class="pt__label" data-pt-label>${esc(pt)}</span></div></div>
 
 <div class="cursor" aria-hidden="true"><span class="cursor__label" data-cursor-label></span></div>
 <div class="hover-reveal" aria-hidden="true"><div class="hover-reveal__in"></div></div>
@@ -181,7 +177,7 @@ const logoMarquee = () => {
 
 const caseCard = (c, i) => `
 <article class="card" data-reveal="fade" style="--d:${(i % 2) * 0.12}s">
-  <a href="/case-studies/${c.slug}/" data-cursor="View" data-pt-label="${esc(c.title)}">
+  <a href="/case-studies/${c.slug}/" data-cursor="View">
     <div class="card__media media" data-reveal="img">${img(c.cover, c.title)}</div>
     <div class="card__meta"><span class="card__name">${c.title}</span><span class="card__tag">${c.category}</span><span class="card__kind">Case study</span></div>
   </a>
@@ -379,7 +375,7 @@ ${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>
 
 <section class="cs-list container" data-hover-list>
   <div class="cs-list__head"><span>No.</span><span>Project</span><span>Sector</span><span>Headline result</span><span></span></div>
-  ${caseStudies.map((c, i) => `<a class="cs-row" href="/case-studies/${c.slug}/" data-hover-img="${c.cover}" data-pt-label="${esc(c.title)}" data-reveal="fade" style="--d:${i * 0.06}s">
+  ${caseStudies.map((c, i) => `<a class="cs-row" href="/case-studies/${c.slug}/" data-hover-img="${c.cover}" data-reveal="fade" style="--d:${i * 0.06}s">
     <span class="cs-row__idx">${pad(i + 1)}</span>
     <span class="cs-row__title"><span>${c.title}</span></span>
     <span class="cs-row__cat">${c.category}</span>
@@ -405,7 +401,7 @@ const caseDetail = (c, i) => {
     description: `${c.title}: ${c.subtitle}`,
     body: `
 <section class="cs-hero container">
-  <a class="back" href="/case-studies/" data-pt-label="Case Studies"><span class="back__ico">${arrowR}</span>${roll('All case studies')}</a>
+  <a class="back" href="/case-studies/"><span class="back__ico">${arrowR}</span>${roll('All case studies')}</a>
   <div class="phero__top">${label(`Case study ${pad(i + 1)}`)}<span class="label">${c.category}</span></div>
   <h1 class="cs-hero__title" data-split>${c.title}</h1>
   <div class="phero__row"><span></span><p class="phero__lead" data-reveal="fade">${c.subtitle}</p></div>
@@ -441,7 +437,7 @@ const caseDetail = (c, i) => {
 </section>
 
 <section class="cs-next container">
-  <a href="/case-studies/${next.slug}/" class="cs-next__link" data-cursor="Next" data-pt-label="${esc(next.title)}">
+  <a href="/case-studies/${next.slug}/" class="cs-next__link" data-cursor="Next">
     ${label('Next case study')}
     <span class="cs-next__title"><span>${next.title}</span><span class="cs-next__ico">${arrow}</span></span>
     <span class="cs-next__img media">${img(next.cover, next.title)}</span>
