@@ -116,7 +116,10 @@ const layout = ({ title, description = site.description, path = '/', body, pt = 
 <meta property="og:url" content="${site.url}${path}">
 <meta property="og:image" content="${site.url}/assets/img/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preload" href="/assets/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/css/style.css?v=${V.css}">
 <script>document.documentElement.classList.add('js');</script>
