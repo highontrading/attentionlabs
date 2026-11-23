@@ -88,7 +88,7 @@ const footer = () => `
     <div class="ftr__col"><span class="ftr__k">Pages</span>${nav.map((n) => `<a href="${n.href}">${roll(n.label)}</a>`).join('')}</div>
     <div class="ftr__col"><span class="ftr__k">Socials</span>${site.socials.map((s) => `<a href="${s.href}" target="_blank" rel="noopener">${roll(s.label)}</a>`).join('')}</div>
     <div class="ftr__col"><span class="ftr__k">Contact</span><a href="mailto:${site.email}">${roll(site.email)}</a><a href="${site.phoneHref}">${roll(site.phone)}</a></div>
-    <div class="ftr__col"><span class="ftr__k">Studio</span>${site.address.map((a) => `<span>${a}</span>`).join('')}<span class="ftr__clock">Gurugram <b data-clock>--:--</b> IST</span></div>
+    <div class="ftr__col"><span class="ftr__k">Studio</span>${site.address.map((a) => `<span>${a}</span>`).join('')}<span class="ftr__clock">${site.city} <b data-clock>--:--</b> IST</span></div>
   </div>
   <div class="ftr__mark container" aria-hidden="true"><div class="fit-wrap" data-fit><span class="fit">${site.wordmark}<sup>®</sup></span></div></div>
   <div class="ftr__bar container">
@@ -239,7 +239,7 @@ const home = () => layout({
   head: `<script type="application/ld+json">${JSON.stringify({
     '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: site.url,
     email: site.email, telephone: site.phone, description: site.description,
-    address: { '@type': 'PostalAddress', streetAddress: site.address[0], addressLocality: 'Gurugram', addressCountry: 'IN' },
+    address: { '@type': 'PostalAddress', streetAddress: site.address[0], addressLocality: site.city, addressRegion: 'Uttar Pradesh', addressCountry: 'IN' },
     sameAs: site.socials.map((s) => s.href),
   })}</script>`,
   body: `
