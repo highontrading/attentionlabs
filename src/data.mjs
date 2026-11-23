@@ -277,6 +277,7 @@ export const caseStudies = [
     services: ['Positioning', 'Content strategy', 'Short-form production', 'Instagram growth'],
     hero: '/assets/img/covers/fitfinfluencer-wide.webp',
     cover: '/assets/img/covers/fitfinfluencer.webp',
+    logo: '/assets/img/logos/fitfinfluencer.svg',
     challenge:
       'Fitness and finance are two of the most crowded niches on Instagram. Fitfinfluencer needed a sharp, ownable position — and a content system that could ship consistently without burning out the creator.',
     strategy:
@@ -302,6 +303,7 @@ export const caseStudies = [
     services: ['Brand content', 'Explainer videos', 'Social growth', 'Distribution'],
     hero: '/assets/img/covers/omnibook-wide.webp',
     cover: '/assets/img/covers/omnibook.webp',
+    logo: '/assets/img/logos/omnibook.svg',
     challenge:
       'Prediction markets are new to most people. Omnibook needed to explain how its exchange works, build trust in a category that sounds complex, and grow an audience across its social channels.',
     strategy:
@@ -327,6 +329,7 @@ export const caseStudies = [
     services: ['Content strategy', 'Short-form video', 'Social growth', 'Brand storytelling'],
     hero: '/assets/img/covers/ideabro-wide.webp',
     cover: '/assets/img/covers/ideabro.webp',
+    logo: '/assets/img/logos/ideabro.svg',
     challenge:
       'AI creative is everywhere, and most of it looks the same. IdeaBro needed content that showcased its quality, set it apart from generic AI output and brought in the right clients.',
     strategy:
