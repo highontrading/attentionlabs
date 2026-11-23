@@ -178,10 +178,11 @@ const logoMarquee = () => {
   return `<div class="logos" data-reveal="fade"><span class="logos__k">Trusted by</span><div class="logos__viewport"><ul class="logos__track">${row}${row.replace(/alt="[^"]*"/g, 'alt="" aria-hidden="true"')}</ul></div></div>`;
 };
 
-const caseCard = (c, i) => `
+// In feature grids the first card spans the full width and uses the wide hero image.
+const caseCard = (c, i, feature = false) => `
 <article class="card" data-reveal="fade" style="--d:${(i % 2) * 0.12}s">
   <a href="/case-studies/${c.slug}/" data-cursor="View">
-    <div class="card__media media" data-reveal="img">${img(c.cover, c.title)}</div>
+    <div class="card__media media" data-reveal="img">${img(feature && i === 0 ? c.hero : c.cover, c.title)}</div>
     <div class="card__meta"><span class="card__name">${c.title}</span><span class="card__tag">${c.category}</span><span class="card__kind">Case study</span></div>
   </a>
 </article>`;
@@ -269,7 +270,7 @@ ${statsBlock()}
 
 <section class="latest container" id="work">
   <div class="sec-head"><h2 class="h2" data-split>Latest projects</h2><a class="label link" href="/case-studies/">( Case studies )</a></div>
-  <div class="cards">${caseStudies.map(caseCard).join('')}</div>
+  <div class="cards cards--feature">${caseStudies.map((c, i) => caseCard(c, i, true)).join('')}</div>
   <div class="center" data-reveal="fade">${btn('See all case studies', '/case-studies/', { variant: 'ghost' })}</div>
 </section>
 
@@ -346,17 +347,17 @@ const caseIndex = () => layout({
   title: 'Case Studies',
   path: '/case-studies/',
   pt: 'Case Studies',
-  description: 'Real results from real clients — how Attention Labs builds owned media that compounds.',
+  description: 'Case studies: how Attention Labs grows creators and companies across YouTube and Instagram — Shivender Kanwar, Fitfinfluencer, Omnibook, IdeaBro and Alpha Premier League.',
   body: `
-${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>', lead: 'See how we’ve helped founders, funds and companies grow through video-led content strategies — measured in subscribers, deal flow and revenue.' })}
+${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>', lead: 'Creators, startups and brands we’ve grown across YouTube, Instagram and beyond — with content built to hold attention and compound.' })}
 
 <section class="cs-list container" data-hover-list>
-  <div class="cs-list__head"><span>No.</span><span>Project</span><span>Sector</span><span>Headline result</span><span></span></div>
+  <div class="cs-list__head"><span>No.</span><span>Project</span><span>Sector</span><span>Highlight</span><span></span></div>
   ${caseStudies.map((c, i) => `<a class="cs-row" href="/case-studies/${c.slug}/" data-hover-img="${c.cover}" data-reveal="fade" style="--d:${i * 0.06}s">
     <span class="cs-row__idx">${pad(i + 1)}</span>
     <span class="cs-row__title"><span>${c.title}</span></span>
     <span class="cs-row__cat">${c.category}</span>
-    <span class="cs-row__metric"><b>${c.metrics[0].value}</b> ${c.metrics[0].label}</span>
+    <span class="cs-row__metric"><b>${c.headline.value}</b> ${c.headline.label}</span>
     <span class="cs-row__go">${arrow}</span>
     <span class="cs-row__img">${img(c.cover, c.title)}</span>
   </a>`).join('')}
@@ -364,7 +365,7 @@ ${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>
 
 <section class="latest container">
   <div class="sec-head"><h2 class="h2" data-split>In pictures</h2>${label(`${pad(caseStudies.length)} projects`)}</div>
-  <div class="cards">${caseStudies.map(caseCard).join('')}</div>
+  <div class="cards cards--feature">${caseStudies.map((c, i) => caseCard(c, i, true)).join('')}</div>
 </section>
 `,
 });
@@ -380,21 +381,32 @@ const caseDetail = (c, i) => {
 <section class="cs-hero container">
   <a class="back" href="/case-studies/"><span class="back__ico">${arrowR}</span>${roll('All case studies')}</a>
   <div class="phero__top">${label(`Case study ${pad(i + 1)}`)}<span class="label">${c.category}</span></div>
+  ${c.logo ? `<img class="cs-logo" src="${c.logo}" alt="${esc(c.client)} logo" data-reveal="fade">` : ''}
   <h1 class="cs-hero__title" data-split>${c.title}</h1>
   <div class="phero__row"><span></span><p class="phero__lead" data-reveal="fade">${c.subtitle}</p></div>
   <dl class="cs-meta" data-reveal="fade">
     <div><dt>Client</dt><dd>${c.client}</dd></div>
     <div><dt>Sector</dt><dd>${c.category}</dd></div>
+    <div><dt>Platforms</dt><dd>${c.platforms}</dd></div>
     <div><dt>Services</dt><dd>${c.services.join(', ')}</dd></div>
-    <div><dt>Timeline</dt><dd>${c.metrics.find((m) => m.label === 'Timeline')?.value || '—'}</dd></div>
   </dl>
 </section>
 
-<div class="cs-cover container"><div class="media media--tall" data-reveal="img"><img src="${c.hero}" alt="${esc(c.title)}" fetchpriority="high" data-parallax="0.12"></div></div>
+${(() => {
+  // Designed cover cards contain type, so they are shown un-zoomed (no parallax crop).
+  const typeCard = c.hero.includes('/covers/');
+  const media = `<div class="media media--tall" data-reveal="img"><img src="${c.hero}" alt="${esc(c.title)}" fetchpriority="high"${typeCard ? '' : ' data-parallax="0.12"'}>${c.video ? `<span class="cs-cover__play" aria-hidden="true"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></i>Play film</span>` : ''}</div>`;
+  if (!c.video) return `<div class="cs-cover container">${media}</div>`;
+  const w = work.find((x) => x.id === c.video);
+  const t = esc(w ? `${w.client} — ${w.title}` : c.title);
+  return `<div class="cs-cover container"><button type="button" class="cs-cover__btn" data-video="${c.video}" data-video-title="${t}" data-cursor="Play" aria-label="Play the ${esc(c.title)} film">${media}</button></div>`;
+})()}
 
-<section class="cs-metrics container">
+${c.metrics ? `<section class="cs-metrics container">
   ${c.metrics.map((m, j) => `<div class="stat" data-reveal="fade" style="--d:${j * 0.08}s"><span class="stat__idx">${pad(j + 1)}</span><span class="stat__num"${countAttrs(m.value)}</span><span class="stat__label">${m.label}</span></div>`).join('')}
-</section>
+</section>` : `<section class="cs-metrics cs-metrics--facts container" aria-label="Snapshot">
+  ${c.facts.map((m, j) => `<div class="stat" data-reveal="fade" style="--d:${j * 0.08}s"><span class="stat__idx">${pad(j + 1)}</span><span class="stat__fact">${m.value}</span><span class="stat__label">${m.label}</span></div>`).join('')}
+</section>`}
 
 <section class="cs-body container">
   ${[['The Challenge', c.challenge], ['The Strategy', c.strategy], ['The Results', c.results]].map(([k, v], j) => `
@@ -404,9 +416,11 @@ const caseDetail = (c, i) => {
   </div>`).join('')}
 </section>
 
-<div class="cs-gallery container">
+
+
+${c.gallery?.length ? `<div class="cs-gallery container">
   ${c.gallery.map((g, j) => `<div class="media" data-reveal="img" style="--d:${j * 0.12}s"><img src="${g}" alt="" loading="lazy" data-parallax="0.08"></div>`).join('')}
-</div>
+</div>` : ''}
 
 <section class="cs-learn container">
   ${label('Key learnings')}
@@ -417,7 +431,7 @@ const caseDetail = (c, i) => {
   <a href="/case-studies/${next.slug}/" class="cs-next__link" data-cursor="Next">
     ${label('Next case study')}
     <span class="cs-next__title"><span>${next.title}</span><span class="cs-next__ico">${arrow}</span></span>
-    <span class="cs-next__img media">${img(next.cover, next.title)}</span>
+    <span class="cs-next__img media">${img(next.hero, next.title)}</span>
   </a>
 </section>
 `,

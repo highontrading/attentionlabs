@@ -230,18 +230,27 @@ export const work = [
   },
 ];
 
+// Case studies.
+// - `metrics`: verified, numeric results (count-up animation). Only add real numbers.
+// - `facts`: snapshot cards shown when there are no published metrics yet.
+//   To publish results, replace `facts` with `metrics: [{ value: '250K+', label: 'Followers' }, …]`.
+// - `cover` (cards, 4:3) / `hero` (case-study header, wide) / optional `logo`:
+//   swap the paths when the final client artwork arrives.
+// - `video`: optional YouTube id, shown as a playable film on the case-study page.
+// - `gallery`: optional pair of extra images shown under the results.
 export const caseStudies = [
   {
     slug: 'shivender-kanwar',
     client: 'Shivender Kanwar',
     title: 'Shivender Kanwar',
-    short: 'Ex Para SF → 100K Subscribers',
-    subtitle: 'From zero to 100K+ subscribers: building a military content empire.',
+    subtitle: 'From zero to 100K+ subscribers: building a military content empire on YouTube.',
     category: 'Creator · YouTube',
+    platforms: 'YouTube',
+    headline: { value: '100K+', label: 'Subscribers' },
     services: ['Channel strategy', 'Long-form production', 'Short-form', 'Distribution'],
     hero: '/assets/img/people/shivender-field.webp',
     cover: '/assets/img/people/shivender-kanwar.webp',
-    gallery: ['/assets/img/work/shivender-intro.webp', '/assets/img/people/shivender-kanwar.webp'],
+    video: 'jIRnbOJONdg',
     challenge:
       'Shivender Kanwar, an ex-Para SF commando, had incredible stories and expertise but zero digital presence. The challenge was to translate military experience into engaging content that could build trust and authority in the crowded YouTube space.',
     strategy:
@@ -258,77 +267,104 @@ export const caseStudies = [
       'Authentic expertise + attention engineering = owned media assets. The success came from treating content as a data problem, not a creative one.',
   },
   {
-    slug: 'tech-founder-series',
-    client: 'Tech Founder',
-    title: 'Tech Founder Series',
-    short: 'Tech Founder → 100K Subscribers',
-    subtitle: 'Scaling technical thought leadership from engineering blogs to video.',
-    category: 'B2B · Thought leadership',
-    services: ['Building in public', 'Long-form video', 'Talent brand'],
-    hero: '/assets/img/stock/engineers.webp',
-    cover: '/assets/img/stock/engineers.webp',
-    gallery: ['/assets/img/stock/desk-top.webp', '/assets/img/stock/strategy-wall.webp'],
+    slug: 'fitfinfluencer',
+    client: 'Fitfinfluencer',
+    title: 'Fitfinfluencer',
+    subtitle: 'Growing an Instagram creator brand at the intersection of fitness and finance.',
+    category: 'Creator · Instagram',
+    platforms: 'Instagram',
+    headline: { value: 'Fitness × Finance', label: 'on Instagram' },
+    services: ['Positioning', 'Content strategy', 'Short-form production', 'Instagram growth'],
+    hero: '/assets/img/covers/fitfinfluencer-wide.webp',
+    cover: '/assets/img/covers/fitfinfluencer.webp',
     challenge:
-      'A technical founder needed to transition from engineering blogs to video content to reach a broader audience and attract top talent.',
+      'Fitness and finance are two of the most crowded niches on Instagram. Fitfinfluencer needed a sharp, ownable position — and a content system that could ship consistently without burning out the creator.',
     strategy:
-      "We focused on 'Building in Public' — documenting the engineering challenges and solutions in high-fidelity video formats.",
+      'We positioned the brand where the two niches meet — discipline in the gym, discipline with money — and built a repeatable short-form engine around it: hook-first Reels, recurring formats and carousels engineered for saves and shares.',
     results:
-      'Achieved 100K subscribers in the niche tech sector, resulting in a 40% increase in inbound engineering applications.',
-    metrics: [
-      { value: '100K', label: 'Subscribers' },
-      { value: '40%', label: 'Hiring lift' },
-      { value: '500K+', label: 'Dev reach' },
-      { value: '6mo', label: 'Timeline' },
+      'A consistent, recognisable Instagram presence with growing reach, engagement and community — in an intersection the creator now owns.',
+    facts: [
+      { value: 'Instagram', label: 'Platform' },
+      { value: 'Fitness × Finance', label: 'Niche' },
+      { value: 'Reels & carousels', label: 'Formats' },
+      { value: 'Growth engine', label: 'Engagement' },
     ],
-    learnings:
-      'Technical audiences value density and authenticity. High production value combined with deep technical content is a winning formula.',
+    learnings: 'A crowded niche isn’t a problem when you own the intersection. Positioning first, volume second.',
   },
   {
-    slug: 'vc-firm-media-arm',
-    client: 'VC Firm',
-    title: 'VC Firm Media Arm',
-    short: 'VC Firm → 50M+ Views',
-    subtitle: '50M+ views for an investment thesis — media as leverage for capital.',
-    category: 'Venture capital · Media arm',
-    services: ['Media brand', 'Founder stories', 'Thesis deep-dives'],
-    hero: '/assets/img/stock/towers.webp',
-    cover: '/assets/img/stock/pitch-talk.webp',
-    gallery: ['/assets/img/stock/analytics-laptop.webp', '/assets/img/stock/open-office.webp'],
+    slug: 'omnibook',
+    client: 'Omnibook',
+    title: 'Omnibook',
+    subtitle: 'Making a prediction-markets exchange easy to understand — and worth following.',
+    category: 'Fintech · Prediction markets',
+    platforms: 'Instagram · YouTube',
+    headline: { value: 'Exchange', label: 'for prediction markets' },
+    services: ['Brand content', 'Explainer videos', 'Social growth', 'Distribution'],
+    hero: '/assets/img/covers/omnibook-wide.webp',
+    cover: '/assets/img/covers/omnibook.webp',
     challenge:
-      'A leading VC firm wanted to build a media moat to attract better deal flow and support portfolio companies.',
+      'Prediction markets are new to most people. Omnibook needed to explain how its exchange works, build trust in a category that sounds complex, and grow an audience across its social channels.',
     strategy:
-      'Created an educational media arm focusing on market trends, founder stories and investment-thesis deep-dives.',
-    results: 'Generated 50M+ views across platforms, becoming a primary source of deal flow.',
-    metrics: [
-      { value: '50M+', label: 'Views' },
-      { value: '3X', label: 'Deal flow' },
-      { value: '15', label: 'PortCo features' },
-      { value: '18mo', label: 'Timeline' },
+      'We turned the product into stories: short explainers, market breakdowns and timely content around real-world events — making the exchange easy to understand and easy to share across Instagram and YouTube.',
+    results:
+      'A stronger, more consistent presence across Omnibook’s channels, with content that does the explaining before the first sign-up.',
+    facts: [
+      { value: 'Prediction markets', label: 'Sector' },
+      { value: 'Instagram · YouTube', label: 'Platforms' },
+      { value: 'Explainers & breakdowns', label: 'Formats' },
+      { value: 'Growth engine', label: 'Engagement' },
     ],
-    learnings: 'Media is the new leverage for capital. Educational content builds long-term trust with founders.',
+    learnings: 'In a new category, education is distribution. If people understand it, they share it.',
   },
   {
-    slug: 'enterprise-revenue-engine',
-    client: 'Enterprise SaaS',
-    title: 'Enterprise Revenue Engine',
-    short: 'Enterprise → $2M ARR from Content',
-    subtitle: '$2M ARR attributed directly to organic content.',
-    category: 'Enterprise SaaS · Demand',
-    services: ['Media brand', 'Decision-maker content', 'Organic acquisition'],
-    hero: '/assets/img/stock/loft-office.webp',
-    cover: '/assets/img/stock/boardroom.webp',
-    gallery: ['/assets/img/stock/team-laptop.webp', '/assets/img/stock/boardroom.webp'],
+    slug: 'ideabro',
+    client: 'IdeaBro',
+    title: 'IdeaBro',
+    subtitle: 'Showing what an AI creative agency can do — with content that proves it.',
+    category: 'AI · Creative agency',
+    platforms: 'Instagram · YouTube',
+    headline: { value: 'AI creative', label: 'agency growth' },
+    services: ['Content strategy', 'Short-form video', 'Social growth', 'Brand storytelling'],
+    hero: '/assets/img/covers/ideabro-wide.webp',
+    cover: '/assets/img/covers/ideabro.webp',
     challenge:
-      'An enterprise SaaS company wanted to reduce reliance on paid ads and build organic acquisition channels.',
+      'AI creative is everywhere, and most of it looks the same. IdeaBro needed content that showcased its quality, set it apart from generic AI output and brought in the right clients.',
     strategy:
-      'Launched a media brand targeting decision-makers with high-value industry insights and problem-solving content.',
-    results: 'Attributed $2M in ARR directly to organic content leads within the first year.',
-    metrics: [
-      { value: '$2M', label: 'ARR generated' },
-      { value: '-60%', label: 'CAC reduction' },
-      { value: '500+', label: 'Qualified leads' },
-      { value: '12mo', label: 'Timeline' },
+      'We built a showcase-driven content engine: behind-the-scenes of real AI workflows, before/after transformations and fast-turnaround trend content — packaged for Instagram and YouTube.',
+    results:
+      'A sharper brand presence and a growing audience across IdeaBro’s channels, with content that works as both a portfolio and a pipeline.',
+    facts: [
+      { value: 'AI creative', label: 'Sector' },
+      { value: 'Instagram · YouTube', label: 'Platforms' },
+      { value: 'Showcases & BTS', label: 'Formats' },
+      { value: 'Growth engine', label: 'Engagement' },
     ],
-    learnings: "B2B content doesn't have to be boring. High-quality production and storytelling convert enterprise buyers.",
+    learnings: 'When everyone can generate, taste is the differentiator. Show the process, not just the output.',
+  },
+  {
+    slug: 'alpha-premier-league',
+    client: 'Blackrose',
+    title: 'Alpha Premier League',
+    subtitle: 'Launching Alpha Premier League by Blackrose with a film and content built to make noise.',
+    category: 'Launch · Brand film',
+    platforms: 'Instagram · YouTube',
+    headline: { value: 'Launch film', label: 'by Blackrose' },
+    services: ['Launch film', 'Motion design', 'Social content', 'Distribution'],
+    hero: '/assets/img/work/alpha-premier-league.webp',
+    cover: '/assets/img/work/alpha-premier-league.webp',
+    video: 'NH51G258gTg',
+    challenge:
+      'Alpha Premier League by Blackrose needed a launch that cut through — something that announced the league with energy and gave people a reason to follow from day one.',
+    strategy:
+      'We produced a high-energy launch film with bold motion design, then cut it into a run of social assets for Instagram and YouTube to build anticipation before, during and after launch.',
+    results:
+      'A launch with a clear, memorable identity on screen — and a library of content that kept the league in front of its audience.',
+    facts: [
+      { value: 'Blackrose', label: 'Client' },
+      { value: 'Launch film', label: 'Hero asset' },
+      { value: 'Instagram · YouTube', label: 'Platforms' },
+      { value: 'Launch campaign', label: 'Engagement' },
+    ],
+    learnings: 'A launch is a story, not a post. Build one hero asset, then make it travel.',
   },
 ];

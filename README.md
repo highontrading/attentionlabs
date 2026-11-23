@@ -24,6 +24,11 @@ All copy lives in **`src/data.mjs`**: services, pricing, stats, testimonials, FA
 
 **To add a case study,** add an object to `caseStudies` in `src/data.mjs`. Its page is generated at `/case-studies/<slug>/`.
 
+**To update a case study:**
+- Real numbers: replace `facts` with `metrics` (for example `{ value: '250K+', label: 'Followers' }`). Metrics get the count-up animation.
+- Client artwork: point `cover` (cards, 4:3) and `hero` (page header, about 1.9:1) at the new images. Add `logo` to show the client's logo above the title.
+- Film: set `video` to a YouTube id and the page header becomes playable.
+
 **To add a portfolio video,** add `{ id: '<YouTube id>', title, client, type, img }` to `work`. Each new `type` becomes a filter chip automatically.
 
 ## Pages
