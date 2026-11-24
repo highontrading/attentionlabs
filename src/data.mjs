@@ -235,7 +235,7 @@ export const work = [
 // - `facts`: snapshot cards shown when there are no published metrics yet.
 //   To publish results, replace `facts` with `metrics: [{ value: '250K+', label: 'Followers' }, …]`.
 // - `cover` (cards, 4:3) / `hero` (case-study header, wide) / optional `logo`:
-//   swap the paths when the final client artwork arrives.
+//   swap the paths when the final client artwork arrives. `logoScale` enlarges a logo on its page.
 // - `video`: optional YouTube id, shown as a playable film on the case-study page.
 // - `gallery`: optional pair of extra images shown under the results.
 export const caseStudies = [
@@ -320,8 +320,8 @@ export const caseStudies = [
   },
   {
     slug: 'ideabro',
-    client: 'IdeaBro',
-    title: 'IdeaBro',
+    client: 'Ideabro',
+    title: 'Ideabro',
     subtitle: 'Showing what an AI creative agency can do — with content that proves it.',
     category: 'AI · Creative agency',
     platforms: 'Instagram · YouTube',
@@ -330,12 +330,13 @@ export const caseStudies = [
     hero: '/assets/img/covers/ideabro-wide.webp',
     cover: '/assets/img/covers/ideabro.webp',
     logo: '/assets/img/logos/ideabro.svg',
+    logoScale: 1.3, // the solid “B” reads small next to the other marks
     challenge:
-      'AI creative is everywhere, and most of it looks the same. IdeaBro needed content that showcased its quality, set it apart from generic AI output and brought in the right clients.',
+      'AI creative is everywhere, and most of it looks the same. Ideabro needed content that showcased its quality, set it apart from generic AI output and brought in the right clients.',
     strategy:
       'We built a showcase-driven content engine: behind-the-scenes of real AI workflows, before/after transformations and fast-turnaround trend content — packaged for Instagram and YouTube.',
     results:
-      'A sharper brand presence and a growing audience across IdeaBro’s channels, with content that works as both a portfolio and a pipeline.',
+      'A sharper brand presence and a growing audience across Ideabro’s channels, with content that works as both a portfolio and a pipeline.',
     facts: [
       { value: 'AI creative', label: 'Sector' },
       { value: 'Instagram · YouTube', label: 'Platforms' },

@@ -576,7 +576,7 @@ html:not(.has-cursor) .tile__play { opacity: .9; transform: none; }
 .cs-metrics .stat__num { font-size: clamp(48px, 6vw, 104px); }
 .cs-metrics--facts .stat { row-gap: clamp(22px, 3vw, 44px); }
 .stat__fact { grid-column: 1 / -1; font-size: clamp(22px, 2.3vw, 38px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; }
-.cs-logo { display: block; height: clamp(40px, 4.4vw, 64px); width: auto; margin: clamp(20px, 2.4vw, 32px) 0 -4px; }
+.cs-logo { display: block; height: calc(clamp(40px, 4.4vw, 64px) * var(--s, 1)); width: auto; margin: clamp(20px, 2.4vw, 32px) 0 -4px; }
 .cs-cover__btn { display: block; width: 100%; text-align: left; }
 .cs-cover__play { position: absolute; left: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 28px); display: inline-flex; align-items: center; gap: 12px; padding: 6px 20px 6px 6px; border-radius: 99px; background: var(--bg); color: var(--ink); font-size: 15px; font-weight: 500; transition: background-color .4s var(--ease), transform .5s var(--ease-back); }
 .cs-cover__play i { width: 44px; height: 44px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; }

@@ -347,7 +347,7 @@ const caseIndex = () => layout({
   title: 'Case Studies',
   path: '/case-studies/',
   pt: 'Case Studies',
-  description: 'Case studies: how Attention Labs grows creators and companies across YouTube and Instagram — Shivender Kanwar, Fitfinfluencer, Omnibook, IdeaBro and Alpha Premier League.',
+  description: 'Case studies: how Attention Labs grows creators and companies across YouTube and Instagram — Shivender Kanwar, Fitfinfluencer, Omnibook, Ideabro and Alpha Premier League.',
   body: `
 ${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>', lead: 'Creators, startups and brands we’ve grown across YouTube, Instagram and beyond — with content built to hold attention and compound.' })}
 
@@ -381,7 +381,7 @@ const caseDetail = (c, i) => {
 <section class="cs-hero container">
   <a class="back" href="/case-studies/"><span class="back__ico">${arrowR}</span>${roll('All case studies')}</a>
   <div class="phero__top">${label(`Case study ${pad(i + 1)}`)}<span class="label">${c.category}</span></div>
-  ${c.logo ? `<img class="cs-logo" src="${c.logo}" alt="${esc(c.client)} logo" data-reveal="fade">` : ''}
+  ${c.logo ? `<img class="cs-logo" src="${c.logo}" alt="${esc(c.client)} logo" data-reveal="fade"${c.logoScale ? ` style="--s:${c.logoScale}"` : ''}>` : ''}
   <h1 class="cs-hero__title" data-split>${c.title}</h1>
   <div class="phero__row"><span></span><p class="phero__lead" data-reveal="fade">${c.subtitle}</p></div>
   <dl class="cs-meta" data-reveal="fade">
