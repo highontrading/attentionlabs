@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import {
   site, nav, stats, clients, problemFix, audiences, services, whyUs, ownedMedia,
-  guarantees, process as steps, anatomy, labReport, testimonials, faqs, work, caseStudies, reel,
+  guarantees, process as steps, anatomy, labReport, testimonials, faqs, work, caseStudies, reel, about,
 } from './src/data.mjs';
 
 const OUT = 'dist';
@@ -42,7 +42,7 @@ const header = (path) => `
 <header class="hdr" data-hdr>
   <a class="hdr__logo" href="/" aria-label="${site.name} — home">${site.wordmark}<sup>®</sup></a>
   <nav class="hdr__links" aria-label="Primary">
-    ${nav.slice(1, 4).map((n) => `<a href="${n.href}"${path === n.href ? ' aria-current="page"' : ''}>${roll(n.label)}</a>`).join('')}
+    ${nav.slice(1, 5).map((n) => `<a href="${n.href}"${path === n.href ? ' aria-current="page"' : ''}>${roll(n.label)}</a>`).join('')}
   </nav>
   <div class="hdr__actions">
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu" data-menu-toggle>
@@ -168,7 +168,7 @@ const statsBlock = () => `
 <section class="stats container">
   ${stats.map((s, i) => `<div class="stat" data-reveal="fade" style="--d:${i * 0.1}s">
     <span class="stat__idx">${pad(i + 1)}</span>
-    <span class="stat__num" data-count="${s.value}" data-suffix="${s.suffix}">0${s.suffix}</span>
+    <span class="stat__num" data-count="${s.value}" data-suffix="${s.suffix}">${s.value.toLocaleString('en-US')}${s.suffix}</span>
     <span class="stat__label">${s.label}</span>
   </div>`).join('')}
 </section>`;
@@ -304,28 +304,56 @@ ${faqBlock()}
 `,
 });
 
+// Work items: YouTube films (lightbox embed) + the hero reel videos (preview
+// loops that play on screen; click opens the full video with sound).
+const playIcon = `<span class="witem__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>`;
+const workYouTube = (w) => `<article class="witem" data-type="${w.type}" data-reveal="fade">
+    <button type="button" class="witem__btn" data-video="${w.id}" data-video-title="${esc(`${w.client} — ${w.title}`)}" data-cursor="Play" aria-label="Play ${esc(w.title)}">
+      <div class="witem__media media" data-reveal="img">${img(w.img, `${w.client} — ${w.title}`)}${playIcon}</div>
+    </button>
+    <div class="card__meta"><span class="card__name">${w.title}</span><span class="card__tag">${w.client}</span><span class="card__kind">${w.type}</span></div>
+  </article>`;
+const workVideo = (v) => `<article class="witem" data-type="${v.type}" data-reveal="fade">
+    <button type="button" class="witem__btn" data-reel-full="${v.full}" data-portrait="${v.r < 1 ? 1 : 0}" data-video-title="${esc(v.title)}" data-cursor="Play" aria-label="Play ${esc(v.title)} with sound">
+      <div class="witem__media media" data-reveal="img"><video muted loop playsinline preload="none" poster="${v.poster}" data-reel-src="${v.src}" disablepictureinpicture></video>${playIcon}</div>
+    </button>
+    <div class="card__meta"><span class="card__name">${v.title}</span><span class="card__tag">${v.r < 1 ? 'Vertical · 9:16' : 'Film'}</span><span class="card__kind">${v.type}</span></div>
+  </article>`;
+
 const workPage = () => {
-  const types = ['All', ...new Set(work.map((w) => w.type))];
+  const films = [...work.map((w) => ({ ...w, yt: true })), ...reel.filter((v) => v.r >= 1)];
+  // interleave YouTube work and reel films so categories mix on the grid
+  const filmsMixed = [films[0], films[4], films[5], films[1], films[6], films[7], films[2], films[8], films[9], films[3]].filter(Boolean);
+  const verticals = reel.filter((v) => v.r < 1);
+  const all = [...filmsMixed, ...verticals];
+  const order = ['Brand films', 'Short-form', 'Launch films', 'Creator', 'Motion'];
+  const types = ['All', ...order.filter((t) => all.some((x) => x.type === t))];
+  const count = (t) => (t === 'All' ? all.length : all.filter((x) => x.type === t).length);
   return layout({
     title: 'Work',
     path: '/work/',
     pt: 'Work',
-    description: 'Selected work by Attention Labs — brand films, launch films, creator channels and motion design.',
+    description: 'Selected work by Attention Labs — brand films, short-form video, launch films, creator content and motion design.',
     body: `
 ${pageHero({
   k: 'Portfolio',
-  title: `Selected <em>work</em><sup class="phero__sup">(${pad(work.length)})</sup>`,
-  lead: 'Explore our work and see how we’ve helped brands capture attention and drive growth through video-led content.',
-  extra: `<div class="filters" role="toolbar" aria-label="Filter work" data-reveal="fade">${types.map((t, i) => `<button type="button" class="chip${i === 0 ? ' is-on' : ''}" data-filter="${t}" aria-pressed="${i === 0}">${t}${t === 'All' ? `<sup>${work.length}</sup>` : ''}</button>`).join('')}</div>`,
+  title: `Selected <em>work</em><sup class="phero__sup">(${pad(all.length)})</sup>`,
+  lead: 'Brand films, short-form, launches and creator content — made in-house, built to hold attention. Hover to preview, click to watch with sound.',
+  extra: `<div class="filters" role="toolbar" aria-label="Filter work" data-reveal="fade">${types.map((t, i) => `<button type="button" class="chip${i === 0 ? ' is-on' : ''}" data-filter="${t}" aria-pressed="${i === 0}">${t}<sup>${count(t)}</sup></button>`).join('')}</div>`,
 })}
 
-<section class="work container">
-  ${work.map((w, i) => `<article class="witem" data-type="${w.type}" data-reveal="fade" style="--d:${(i % 2) * 0.12}s">
-    <button type="button" class="witem__btn" data-video="${w.id}" data-video-title="${esc(`${w.client} — ${w.title}`)}" data-cursor="Play" aria-label="Play ${esc(w.title)}">
-      <div class="witem__media media" data-reveal="img">${img(w.img, `${w.client} — ${w.title}`)}<span class="witem__play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span></div>
-    </button>
-    <div class="card__meta"><span class="card__name">${w.title}</span><span class="card__tag">${w.client}</span><span class="card__kind">${w.type}</span></div>
-  </article>`).join('')}
+<section class="work-sec container" data-work-sec>
+  <div class="sec-head"><h2 class="h2" data-split>Films</h2>${label(`${pad(filmsMixed.length)} pieces`)}</div>
+  <div class="work">
+  ${filmsMixed.map((x) => (x.yt ? workYouTube(x) : workVideo(x))).join('')}
+  </div>
+</section>
+
+<section class="work-sec container" data-work-sec>
+  <div class="sec-head"><h2 class="h2" data-split>Short-form</h2>${label(`${pad(verticals.length)} vertical videos`)}</div>
+  <div class="work work--vertical">
+  ${verticals.map(workVideo).join('')}
+  </div>
 </section>
 
 <section class="clients container">
@@ -370,6 +398,28 @@ ${pageHero({ k: 'Case studies', title: 'Real results from <em>real clients.</em>
 `,
 });
 
+// Numeric-looking stat values ("600K", "+40%", "2.9X", "~30K") count up; words stay text.
+const isNumeric = (v) => /^[^\d\s-]{0,2}-?\d[\d.,]*[A-Za-z%+]{0,2}$/.test(String(v));
+
+// Before → after bars per platform (case-study results).
+const growthBars = (g) => {
+  const shared = g.max === 'shared' ? Math.max(...g.items.map((x) => x.to)) : 0;
+  return `<div class="growth" data-reveal="fade">
+    ${g.items.some((x) => x.from > 0) ? `<div class="growth__legend"><span><i class="is-from"></i>Before</span><span><i class="is-to"></i>After</span></div>` : `<div class="growth__legend"><span><i class="is-to"></i>Audience built</span></div>`}
+    ${g.items.map((x) => {
+      const max = shared || x.to;
+      const pct = (v) => `${Math.max(0, Math.min(100, (v / max) * 100)).toFixed(1)}%`;
+      return `<div class="growth__row">
+        <div class="growth__k"><b>${x.platform}</b><span>${x.unit}${x.from === 0 && x.fromLabel ? ' · from 0' : ''}</span></div>
+        <div class="growth__bars">
+          ${x.fromLabel !== '' && x.from !== 0 ? `<div class="growth__bar is-from" style="--w:${pct(x.from)}"><i></i><span>${x.fromLabel}</span></div>` : ''}
+          <div class="growth__bar is-to" style="--w:${pct(x.to)}"><i></i><span>${x.toLabel}</span></div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+};
+
 const caseDetail = (c, i) => {
   const next = caseStudies[(i + 1) % caseStudies.length];
   return layout({
@@ -388,7 +438,7 @@ const caseDetail = (c, i) => {
     <div><dt>Client</dt><dd>${c.client}</dd></div>
     <div><dt>Sector</dt><dd>${c.category}</dd></div>
     <div><dt>Platforms</dt><dd>${c.platforms}</dd></div>
-    <div><dt>Services</dt><dd>${c.services.join(', ')}</dd></div>
+    ${c.duration ? `<div><dt>Timeline</dt><dd>${c.duration}</dd></div>` : `<div><dt>Services</dt><dd>${c.services.join(', ')}</dd></div>`}
   </dl>
 </section>
 
@@ -402,21 +452,39 @@ ${(() => {
   return `<div class="cs-cover container"><button type="button" class="cs-cover__btn" data-video="${c.video}" data-video-title="${t}" data-cursor="Play" aria-label="Play the ${esc(c.title)} film">${media}</button></div>`;
 })()}
 
-${c.metrics ? `<section class="cs-metrics container">
-  ${c.metrics.map((m, j) => `<div class="stat" data-reveal="fade" style="--d:${j * 0.08}s"><span class="stat__idx">${pad(j + 1)}</span><span class="stat__num"${countAttrs(m.value)}</span><span class="stat__label">${m.label}</span></div>`).join('')}
-</section>` : `<section class="cs-metrics cs-metrics--facts container" aria-label="Snapshot">
-  ${c.facts.map((m, j) => `<div class="stat" data-reveal="fade" style="--d:${j * 0.08}s"><span class="stat__idx">${pad(j + 1)}</span><span class="stat__fact">${m.value}</span><span class="stat__label">${m.label}</span></div>`).join('')}
-</section>`}
-
-<section class="cs-body container">
-  ${[['The Challenge', c.challenge], ['The Strategy', c.strategy], ['The Results', c.results]].map(([k, v], j) => `
-  <div class="cs-sec">
-    <div class="cs-sec__k">${label(`${pad(j + 1)} — ${k}`)}</div>
-    <p class="cs-sec__text" data-reveal="fade">${v}</p>
-  </div>`).join('')}
+<section class="cs-metrics container" aria-label="Results at a glance">
+  ${c.stats.map((m, j) => `<div class="stat" data-reveal="fade" style="--d:${j * 0.08}s"><span class="stat__idx">${pad(j + 1)}</span>${isNumeric(m.value) ? `<span class="stat__num"${countAttrs(m.value)}</span>` : `<span class="stat__fact">${m.value}</span>`}<span class="stat__label">${m.label}</span></div>`).join('')}
 </section>
 
+<section class="cs-overview container">
+  <div class="cs-sec__k">${label('Overview')}</div>
+  <p class="cs-overview__text" data-fill>${c.overview}</p>
+</section>
 
+<section class="cs-body container">
+  <div class="cs-sec">
+    <div class="cs-sec__k">${label('01 — The challenge')}</div>
+    <p class="cs-sec__text" data-reveal="fade">${c.challenge}</p>
+  </div>
+  <div class="cs-sec">
+    <div class="cs-sec__k">${label('02 — Our approach')}</div>
+    <ol class="cs-steps">
+      ${c.approach.map((a, j) => `<li class="cs-step" data-reveal="fade" style="--d:${(j % 2) * 0.1}s"><span class="cs-step__n">${pad(j + 1)}</span><h3>${a.title}</h3><p>${a.text}</p></li>`).join('')}
+    </ol>
+  </div>
+  <div class="cs-sec">
+    <div class="cs-sec__k">${label('03 — What we made')}</div>
+    <ul class="cs-chips" data-reveal="fade">${c.deliverables.map((d) => `<li>${d}</li>`).join('')}</ul>
+  </div>
+  <div class="cs-sec">
+    <div class="cs-sec__k">${label('04 — The results')}</div>
+    <div class="cs-results">
+      <p class="cs-sec__text" data-reveal="fade">${c.results}</p>
+      ${c.growth ? growthBars(c.growth) : ''}
+      <ul class="cs-outcomes">${c.outcomes.map((o, j) => `<li data-reveal="fade" style="--d:${j * 0.06}s">${o}</li>`).join('')}</ul>
+    </div>
+  </div>
+</section>
 
 ${c.gallery?.length ? `<div class="cs-gallery container">
   ${c.gallery.map((g, j) => `<div class="media" data-reveal="img" style="--d:${j * 0.12}s"><img src="${g}" alt="" loading="lazy" data-parallax="0.08"></div>`).join('')}
@@ -509,6 +577,85 @@ ${pageHero({ k: 'Methodology', title: 'We don’t guess. <em>We test.</em>', lea
 </section>
 
 ${faqBlock()}
+`,
+});
+
+const aboutPage = () => layout({
+  title: 'Who We Are',
+  path: '/about/',
+  pt: 'Who We Are',
+  description: about.intro,
+  body: `
+${pageHero({ k: 'Who we are', title: 'We engineer <em>attention.</em>', lead: about.intro })}
+
+<section class="strip strip--about" aria-label="Showreel">
+  <ul class="strip__track" data-reel>${reel.map((v, i) => reelTile(v, i, false)).join('')}${reel.map((v, i) => reelTile(v, i, true)).join('')}</ul>
+</section>
+
+<section class="ab-statement container">
+  <div class="about__k">${label('Our belief')}</div>
+  <p class="about__text" data-fill>${about.statement}</p>
+</section>
+
+<section class="ab-pillars container">
+  <div class="sec-head"><h2 class="h2" data-split>What we do</h2>${label('End to end')}</div>
+  <p class="ab-lead" data-reveal="fade">We are an end-to-end content partner: one team owns strategy, production, publishing and growth, so nothing gets lost between agencies.</p>
+  <ol class="pillars">
+    ${about.pillars.map((x, i) => `<li class="pillar" data-reveal="fade" style="--d:${i * 0.08}s"><span class="pillar__n">${pad(i + 1)}</span><b class="pillar__k">${x.k}</b><p>${x.text}</p></li>`).join('')}
+  </ol>
+</section>
+
+<section class="ab-services container">
+  <div class="sec-head"><h2 class="h2" data-split>Our services</h2>${label(`${pad(about.services.length)} disciplines`)}</div>
+  ${about.services.map((x, i) => `<article class="svcrow" data-reveal="fade">
+    <div class="svcrow__head"><span class="svcrow__n">${pad(i + 1)}</span><h3>${x.title}</h3></div>
+    <div class="svcrow__body"><p>${x.text}</p><ul>${x.items.map((it) => `<li>${it}</li>`).join('')}</ul></div>
+  </article>`).join('')}
+</section>
+
+<section class="ab-platforms container">
+  <div class="sec-head"><h2 class="h2" data-split>Every platform, its own plan</h2>${label('Platform strategy')}</div>
+  <p class="ab-lead" data-reveal="fade">Every platform has its own audience and its own rules, so we build a separate plan for each one instead of posting the same thing everywhere.</p>
+  <div class="ptable" role="table" aria-label="Platform-by-platform strategy">
+    <div class="ptable__row ptable__row--head" role="row"><span role="columnheader">Platform</span><span role="columnheader">What it does for you</span><span role="columnheader">What we make</span></div>
+    ${about.platforms.map((x, i) => `<div class="ptable__row" role="row" data-reveal="fade" style="--d:${i * 0.05}s"><b role="cell">${x.name}</b><span role="cell" data-k="What it does">${x.does}</span><span role="cell" data-k="What we make">${x.make}</span></div>`).join('')}
+  </div>
+</section>
+
+<section class="ab-who container">
+  <div class="ab-who__side">${label('Who we work with')}<h2 class="h2" data-split>Teams with a story to tell.</h2></div>
+  <div class="ab-who__main">
+    <p class="ab-lead" data-reveal="fade">${about.audience}</p>
+    <ul class="ab-logos" data-reveal="fade">${clients.map((c) => `<li><img src="${c.src}" alt="${esc(c.name)}" loading="lazy"></li>`).join('')}</ul>
+    <div class="ab-work">
+      <span class="ftr__k">Selected work</span>
+      ${caseStudies.map((c) => `<a class="ab-work__row" href="/case-studies/${c.slug}/" data-reveal="fade"><b>${c.title}</b><span>${c.category}</span><span class="ab-work__h">${c.headline.value} <em>${c.headline.label}</em></span><span class="ab-work__go">${arrow}</span></a>`).join('')}
+    </div>
+  </div>
+</section>
+
+<section class="ab-how container">
+  <div class="sec-head"><h2 class="h2" data-split>How we work</h2>${label('5 steps')}</div>
+  <p class="ab-lead" data-reveal="fade">You give us about one interview a month; we handle everything else — and your first assets go live within 2 weeks.</p>
+  <ol class="steps5">
+    ${about.steps.map((x, i) => `<li data-reveal="fade" style="--d:${i * 0.07}s"><span class="steps5__n">${pad(i + 1)}</span><h3>${x.title}</h3><p>${x.text}</p></li>`).join('')}
+  </ol>
+  <div class="sprint" data-reveal="fade"><p>${about.sprint}</p>${btn('Book a call', '/contact/', { variant: 'light' })}</div>
+</section>
+
+<section class="why container">
+  <div class="sec-head"><h2 class="h2" data-split>Why Attention Labs</h2>${label('Why us')}</div>
+  <div class="why__grid why__grid--4">
+    ${about.why.map((w, i) => `<div class="why__item" data-reveal="fade" style="--d:${i * 0.06}s"><span class="why__idx">${pad(i + 1)}</span><h3>${w.title}</h3><p>${w.text}</p></div>`).join('')}
+  </div>
+</section>
+
+<section class="guar container">
+  <div class="sec-head"><h2 class="h2" data-split>We put our name on results</h2>${label('Guarantees')}</div>
+  <div class="guar__grid">
+    ${guarantees.map((g, i) => `<div class="guar__item" data-reveal="fade" style="--d:${i * 0.1}s"><span class="guar__idx">${pad(i + 1)}</span><h3>${g.title}</h3><p>${g.text}</p></div>`).join('')}
+  </div>
+</section>
 `,
 });
 
@@ -607,9 +754,10 @@ write('work/index.html', workPage());
 write('case-studies/index.html', caseIndex());
 caseStudies.forEach((c, i) => write(`case-studies/${c.slug}/index.html`, caseDetail(c, i)));
 write('services/index.html', servicesPage());
+write('about/index.html', aboutPage());
 write('contact/index.html', contactPage());
 write('404.html', notFound());
 
-const urls = ['/', '/work/', '/case-studies/', ...caseStudies.map((c) => `/case-studies/${c.slug}/`), '/services/', '/contact/'];
+const urls = ['/', '/work/', '/case-studies/', ...caseStudies.map((c) => `/case-studies/${c.slug}/`), '/services/', '/about/', '/contact/'];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${site.url}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 console.log('Done.');

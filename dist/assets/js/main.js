@@ -174,6 +174,9 @@
   // reveals are triggered by observing their parent element instead.
   const imgProxies = new Map();
   function startReveals() {
+    // Real numbers ship in the HTML (crawlers, link previews, no-JS); with JS
+    // they reset to 0 just before their count-up animation.
+    if (!reduce) $$('[data-count]').forEach((el) => { if (!el.dataset.counted) el.textContent = `${el.dataset.prefix || ''}0${el.dataset.suffix || ''}`; });
     $$('[data-split]:not([data-split="chars"]), [data-reveal]:not([data-reveal="img"]), .stat__num[data-count]').forEach((el) => revealIO.observe(el));
     $$('[data-reveal="img"]').forEach((el) => {
       const p = el.parentElement;
@@ -343,7 +346,7 @@
   /* ------------------------------------------------------------------ */
   const saveData = navigator.connection && navigator.connection.saveData;
   const reel = (() => {
-    const vids = $$('[data-reel] video');
+    const vids = $$('video[data-reel-src]');
     const autoplay = !reduce && !saveData;
     let last = 0;
     let lbOpen = () => $('[data-lightbox]')?.classList.contains('is-open');
@@ -547,6 +550,8 @@
         items.forEach((it) => it.classList.remove('is-out'));
         $$('.witem:not([hidden]) [data-reveal="img"]').forEach((m) => m.classList.add('is-in'));
       }));
+      // hide a whole section (e.g. "Short-form") when the filter empties it
+      $$('[data-work-sec]').forEach((sec) => (sec.hidden = !$$('.witem', sec).some((it) => !it.hidden)));
       if (lenis) lenis.resize();
     });
   });
@@ -586,7 +591,7 @@
   $$('[data-video]').forEach((b) => b.addEventListener('click', () => openLightbox({ id: b.dataset.video }, b.dataset.videoTitle || '', b)));
   $$('[data-reel-full]').forEach((b) => b.addEventListener('click', () => {
     const tile = b.closest('.tile');
-    const portrait = parseFloat(getComputedStyle(tile).getPropertyValue('--r')) < 1;
+    const portrait = b.dataset.portrait ? b.dataset.portrait === '1' : parseFloat(getComputedStyle(tile).getPropertyValue('--r')) < 1;
     openLightbox({ src: b.dataset.reelFull, portrait }, b.dataset.videoTitle || '', b);
   }));
   $$('[data-lightbox-close]').forEach((b) => b.addEventListener('click', closeLightbox));
